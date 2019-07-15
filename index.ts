@@ -1,11 +1,18 @@
-module.exports = function(md, options) {
+export interface StripMarkdownOptions {
+  listUnicodeChar?: boolean;
+  stripListLeaders?: boolean;
+  gfm?: boolean;
+  useImgAltText?: boolean;
+}
+
+export default function (md: string, options: StripMarkdownOptions) {
   options = options || {};
   options.listUnicodeChar = options.hasOwnProperty('listUnicodeChar') ? options.listUnicodeChar : false;
   options.stripListLeaders = options.hasOwnProperty('stripListLeaders') ? options.stripListLeaders : true;
   options.gfm = options.hasOwnProperty('gfm') ? options.gfm : true;
   options.useImgAltText = options.hasOwnProperty('useImgAltText') ? options.useImgAltText : true;
 
-  var output = md || '';
+  let output = md || '';
 
   // Remove horizontal rules (stripListHeaders conflict with this rule, which is why it has been moved to the top)
   output = output.replace(/^(-\s*?|\*\s*?|_\s*?){3,}\s*$/gm, '');
@@ -19,7 +26,7 @@ module.exports = function(md, options) {
     }
     if (options.gfm) {
       output = output
-        // Header
+      // Header
         .replace(/\n={2,}/g, '\n')
         // Fenced codeblocks
         .replace(/~{3}.*\n/g, '')
@@ -29,7 +36,7 @@ module.exports = function(md, options) {
         .replace(/`{3}.*\n/g, '');
     }
     output = output
-      // Remove HTML tags
+    // Remove HTML tags
       .replace(/<[^>]*>/g, '')
       // Remove setext-style headers
       .replace(/^[=\-]{2,}\s*$/g, '')
@@ -59,5 +66,6 @@ module.exports = function(md, options) {
     console.error(e);
     return md;
   }
+
   return output;
 };
